@@ -4,7 +4,68 @@ export const INITIAL_MEMORY: Record<string, any> = {
   dislikes: [],
   speechTasks: [],
   targetWords: [],
-  masteredWords: []
+  masteredWords: [],
+  phonemeStats: {},
+  achievements: []
+};
+
+export const ACHIEVEMENTS_LIST = [
+  { id: 'friend_named', title: 'Best Friends', description: 'Give your friend a name.', icon: '🏷️' },
+  { id: 'first_chat', title: 'Hello!', description: 'Send your first message.', icon: '👋' },
+  { id: 'story_started', title: 'Storyteller', description: 'Start a new adventure.', icon: '📖' },
+  { id: 'baseline_done', title: 'Checkup Champ', description: 'Finish the 10-word checkup.', icon: '🩺' },
+  { id: 'practice_start', title: 'Try It Out', description: 'Practice a word.', icon: '🎤' },
+  { id: 'word_mastered', title: 'Super Star', description: 'Master your first word.', icon: '🌟' },
+  { id: 'three_mastered', title: 'Word Wizard', description: 'Master 3 words.', icon: '👑' },
+  { id: 'memory_saved', title: 'Time Traveler', description: 'Save your memory file.', icon: '💾' },
+];
+
+export const BASELINE_WORDS = [
+  { word: "Baby", phoneme: "B", emoji: "👶", level: "Early 8" },
+  { word: "Puppy", phoneme: "P", emoji: "🐶", level: "Early 8" },
+  { word: "Mama", phoneme: "M", emoji: "👩", level: "Early 8" },
+  { word: "Toe", phoneme: "T", emoji: "🦶", level: "Middle 8" },
+  { word: "Dada", phoneme: "D", emoji: "👨", level: "Middle 8" },
+  { word: "Cat", phoneme: "K", emoji: "🐱", level: "Middle 8" },
+  { word: "Go", phoneme: "G", emoji: "🟢", level: "Middle 8" },
+  { word: "Sun", phoneme: "S", emoji: "☀️", level: "Late 8" },
+  { word: "Rabbit", phoneme: "R", emoji: "🐰", level: "Late 8" },
+  { word: "Lion", phoneme: "L", emoji: "🦁", level: "Late 8" },
+];
+
+// Based on typical speech development milestones
+export const SPEECH_TREE = {
+  "Early 8 (Lips & Front)": {
+    description: "Easier sounds, usually mastered by age 3.",
+    phonemes: {
+      "M": ["Mama", "Moon", "Milk", "Me", "More"],
+      "B": ["Ball", "Baby", "Book", "Bye", "Bus"],
+      "P": ["Pop", "Puppy", "Pizza", "Pig", "Pie"],
+      "W": ["Water", "Walk", "We", "Wash"],
+      "H": ["Hi", "Happy", "Hot", "Hat"]
+    }
+  },
+  "Middle 8 (Tongue Tip & Back)": {
+    description: "Medium difficulty, usually mastered by age 4-5.",
+    phonemes: {
+      "T": ["Toe", "Table", "Two", "Turtle"],
+      "D": ["Dada", "Dog", "Door", "Duck"],
+      "K": ["Cat", "Cookie", "Car", "Key"],
+      "G": ["Go", "Girl", "Game", "Goat"],
+      "F": ["Fish", "Fan", "Four", "Funny"]
+    }
+  },
+  "Late 8 (Complex & Glides)": {
+    description: "Harder sounds, often tricky until age 6-7.",
+    phonemes: {
+      "L": ["Lion", "Love", "Leaf", "Look"],
+      "R": ["Rabbit", "Red", "Run", "Rainbow"],
+      "S": ["Sun", "Sock", "See", "Snake"],
+      "Z": ["Zoo", "Zebra", "Zap"],
+      "SH": ["Shoe", "Ship", "Sheep", "Shiny"],
+      "TH": ["Think", "Thumb", "Thank", "Three"]
+    }
+  }
 };
 
 export const SAFEGUARDING_RULES = `

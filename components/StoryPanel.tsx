@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { geminiService } from '../services/geminiService';
+import { geminiService, GeminiError } from '../services/geminiService';
 import { Memory, ChatMessage, StoryState } from '../types';
+import { ApiStatusMessage } from './ApiStatusMessage';
 
 interface StoryPanelProps {
   onStartStory: (inputs: { theme: string; hero: string; animal: string; items: string[] }) => Promise<void>;
@@ -10,6 +11,7 @@ interface StoryPanelProps {
   onDownloadAudio: () => void;
   onSaveGame: () => void;
   isGenerating: boolean;
+  isSpeaking: boolean;
   storyState: StoryState;
   memory: Memory;
   chatHistory: ChatMessage[];
@@ -23,6 +25,7 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({
     onDownloadAudio,
     onSaveGame,
     isGenerating, 
+    isSpeaking,
     storyState,
     memory,
     chatHistory
@@ -32,6 +35,9 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({
   const [hero, setHero] = useState(storyState.hero);
   const [animal, setAnimal] = useState(storyState.animal);
   const [items, setItems] = useState(storyState.items);
+  
+  // Local Error State for Surprise Me
+  const [localError, setLocalError] = useState<GeminiError | null>(null);
   
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -69,36 +75,45 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({
   };
 
   const handleSurpriseMe = async () => {
-      const params = await geminiService.generateRandomStoryParams(memory, chatHistory);
-      setTheme(params.theme);
-      setHero(params.hero);
-      setAnimal(params.animal);
-      setItems({
-          item1: params.items[0] || 'Magic Wand',
-          item2: params.items[1] || 'Cookie',
-          item3: params.items[2] || 'Key'
-      });
-      
-      const itemsList = params.items || ['Magic Wand', 'Cookie', 'Key'];
-      
-      // Update state for persistence
-      onUpdateState({ 
-          theme: params.theme, 
-          hero: params.hero, 
-          animal: params.animal, 
-          items: { 
-             item1: params.items[0], 
-             item2: params.items[1], 
-             item3: params.items[2] 
-          }
-      });
+      setLocalError(null);
+      try {
+          const params = await geminiService.generateRandomStoryParams(memory, chatHistory);
+          setTheme(params.theme);
+          setHero(params.hero);
+          setAnimal(params.animal);
+          setItems({
+              item1: params.items[0] || 'Magic Wand',
+              item2: params.items[1] || 'Cookie',
+              item3: params.items[2] || 'Key'
+          });
+          
+          const itemsList = params.items || ['Magic Wand', 'Cookie', 'Key'];
+          
+          // Update state for persistence
+          onUpdateState({ 
+              theme: params.theme, 
+              hero: params.hero, 
+              animal: params.animal, 
+              items: { 
+                 item1: params.items[0], 
+                 item2: params.items[1], 
+                 item3: params.items[2] 
+              }
+          });
 
-      await onStartStory({
-          theme: params.theme,
-          hero: params.hero,
-          animal: params.animal,
-          items: itemsList
-      });
+          await onStartStory({
+              theme: params.theme,
+              hero: params.hero,
+              animal: params.animal,
+              items: itemsList
+          });
+      } catch (error: any) {
+          if (error.name === 'GeminiError') {
+              setLocalError(error);
+          } else {
+              console.error("Surprise Me Failed", error);
+          }
+      }
   };
 
   const handleUseItem = async (item: string) => {
@@ -111,15 +126,22 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({
   if (!storyState.hasStarted) {
       return (
         <div className="w-full h-full flex flex-col items-center p-2 sm:p-4 max-w-2xl mx-auto animate-fade-in-up overflow-y-auto scrollbar-hide">
+            <div className="bg-gradient-to-r from-purple-400 to-pink-500 w-full p-6 rounded-3xl shadow-lg text-white mb-6 text-center relative overflow-hidden flex-shrink-0">
+                <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
+                <h2 className="text-3xl font-black mb-1 drop-shadow-md">Magic Storybook</h2>
+                <p className="text-purple-100 font-medium">Let's Create an Adventure</p>
+            </div>
+
             <div className="bg-white w-full rounded-3xl shadow-lg border-2 border-amber-100 p-6 sm:p-8">
-              <h2 className="text-2xl font-bold text-amber-800 mb-6 text-center flex items-center justify-center gap-2">
-                <span>📚</span> Story Time!
-              </h2>
+              {/* Local Error Display for Surprise Me */}
+              {localError && (
+                  <ApiStatusMessage error={localError} onRetry={handleSurpriseMe} />
+              )}
               
               <button 
                   onClick={handleSurpriseMe}
-                  disabled={isGenerating}
-                  className="w-full mb-6 py-4 rounded-2xl font-bold text-lg bg-gradient-to-r from-purple-400 to-amber-400 text-white shadow-md hover:shadow-lg hover:scale-[1.02] transition-all flex items-center justify-center gap-2"
+                  disabled={isGenerating || isSpeaking || !!localError}
+                  className={`w-full mb-6 py-4 rounded-2xl font-bold text-lg bg-gradient-to-r from-purple-400 to-amber-400 text-white shadow-md hover:shadow-lg hover:scale-[1.02] transition-all flex items-center justify-center gap-2 ${!!localError || isGenerating || isSpeaking ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                   ✨ Surprise Me with a Story!
               </button>
@@ -194,9 +216,9 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({
 
                 <button 
                   onClick={handleStart}
-                  disabled={isGenerating || !theme || !hero}
+                  disabled={isGenerating || isSpeaking || !theme || !hero}
                   className={`w-full mt-6 py-4 rounded-full font-bold text-xl shadow-lg transition-all transform active:scale-95 ${
-                      isGenerating || !theme || !hero 
+                      isGenerating || isSpeaking || !theme || !hero 
                       ? 'bg-gray-200 text-gray-400' 
                       : 'bg-amber-500 text-white hover:bg-amber-600 hover:-translate-y-1'
                   }`}
@@ -272,7 +294,8 @@ export const StoryPanel: React.FC<StoryPanelProps> = ({
                                     <button
                                         key={item}
                                         onClick={() => handleUseItem(item)}
-                                        className="bg-white border-2 border-amber-300 text-amber-700 px-4 py-3 rounded-xl font-bold shadow-sm hover:bg-amber-50 hover:scale-105 transition-all active:scale-95"
+                                        disabled={isSpeaking}
+                                        className={`bg-white border-2 border-amber-300 text-amber-700 px-4 py-3 rounded-xl font-bold shadow-sm hover:bg-amber-50 hover:scale-105 transition-all active:scale-95 ${isSpeaking ? 'opacity-50 cursor-not-allowed' : ''}`}
                                     >
                                         ✨ Use {item}
                                     </button>

@@ -1,80 +1,49 @@
-# Cerebrum Flux - Cognitive Agility Engine
+# Teddy Talk - AI Speech & Story Companion
 
 ## Overview
-Cerebrum Flux is a specialized AI-powered assessment engine designed to measure Cognitive Agility—the ability to shift frameworks, generate novel connections, and integrate disparate types of reasoning.
+Teddy Talk is a safe, playful, and educational web application designed to help children develop speech confidence and social skills through interaction with a charming AI character.
 
-Unlike standard IQ tests that measure processing speed or working memory within fixed rules, Cerebrum Flux acts as a Cognitive Mirror. Powered by Google's Gemini 2.5 Flash model, it evaluates users across 10 distinct dimensions of thought, analyzes their reasoning in real-time, and maps them to one of 16 comprehensive Cognitive Archetypes (e.g., The Explorer, The Systems Engineer, The Meta-Theorist).
+Powered by Google's **Gemini 2.5 Flash** models, the app provides real-time conversation, gamified speech therapy exercises, and interactive storytelling.
 
-## ⚡ Key Features
+## 🧸 Key Features
 
-### 🧠 The 10-Dimension Cognitive Engine
-The app guides users through 10 interactive modules, each probing a specific "muscle" of the mind:
+### 🗣️ Interactive Chat
+*   **Customizable Friends**: Choose between a Teddy, Frog, Unicorn, or Dragon.
+*   **Personalized Memory**: The AI remembers the child's name, favorite things, and past conversations to build a meaningful connection.
+*   **Safe Interaction**: Strict system prompts ensure the AI remains child-friendly, pivoting away from sensitive topics.
 
-*   **Creative Velocity**: Divergent thinking speed and variety.
-*   **Systems Intuition**: Predicting cascades in dynamic systems.
-*   **Cross-Domain Transfer**: Mapping metaphors between unrelated fields (e.g., Economics ↔ Baking).
-*   **Conceptual Synthesis**: Merging opposing philosophies into stable new concepts.
-*   **Reflective Depth**: Analyzing personal belief shifts and hidden assumptions.
+### 🎤 Speech Therapy Engine
+*   **Baseline Assessment**: A 10-word diagnostic checkup (using Gemini's multimodal audio capabilities) to estimate the child's phonetic development level (Early, Middle, or Late 8).
+*   **Gamified Practice**: A "Word Game" where children practice specific sounds. The AI acts as a speech pathologist, listening to audio and providing encouraging, specific feedback.
+*   **Phoneme Tracking**: Tracks attempts and mastery of specific sounds (e.g., "R", "S", "TH").
 
-### 📊 Dynamic Analysis & Scoring
-*   **Flux Metric**: We do not use bell curves. Scores are calculated using a Raw Score (0-10) multiplied by an Integration Factor (0.5x - 1.5x), rewarding elegance and coherence over simple correctness.
-*   **Real-Time Feedback**: The AI provides instant, philosophical analysis of every answer, acting as a mirror to the user's thought process.
-*   **Flux Radar**: A dynamic SVG/Recharts visualization that maps the "shape" of the user's mind.
+### 📚 Magic Story Mode
+*   **Co-Creation**: The AI generates story premises based on the child's interests.
+*   **Interactive Choices**: Stories pause to let the child use "items" to solve problems, fostering critical thinking.
+*   **Audiobooks**: Completed stories can be downloaded as WAV files (generated via Gemini TTS).
 
-### 🧬 Archetype Profiling
-*   **16 Unique Profiles**: Based on the interaction of Quadrants (Synthesist, Architect, Wanderer, Analyst) and Drivers (Curiosity, Creativity, Logic, Insight).
-*   **Comprehensive Reports**: The final output includes a Narrative Summary, Cognitive Cluster analysis, and specific advice on leverage and growth.
+### 🛡️ Parent Dashboard
+*   **Progress Reports**: View mastery of specific sounds and AI-generated summaries of practice sessions.
+*   **Settings**: Configure voice engine (High-quality AI vs. Fast Browser TTS) and target practice words.
+*   **Safeguarding**: Review the AI's safety protocols.
 
-### 📝 Exportable Artifacts
-*   **Interactive HTML Reports**: Users can download a self-contained HTML file containing their full profile, interactive charts, and session transcript.
-*   **JSON Data**: Full session history export for archival or re-analysis.
-
-## 🚀 Installation and Setup in Google AI Studio
-Follow these steps to download the code and run your own instance of the application in Google AI Studio.
+## 🚀 Setup & Installation
 
 ### Prerequisites
-*   **Google Account**: You need a Google account to use Google AI Studio.
-*   **Gemini API Key**: The application requires your own Gemini API key to function.
-    1.  Go to [Google AI Studio](https://aistudio.google.com/).
-    2.  Click on "Get API key" in the top-left menu.
-    3.  Create and copy your key.
+1.  **Google AI Studio API Key**: You need a valid API key from [Google AI Studio](https://aistudio.google.com/).
+2.  **Microphone Access**: The app requires microphone permissions for speech interaction.
 
-### Step 1: Download the Project
-Ensure you have the following file structure in your project folder:
-
-*   index.html
-*   index.tsx
-*   App.tsx
-*   types.ts
-*   components/ (Folder containing TaskView, AnalysisView, etc.)
-*   services/ (Folder containing geminiService.ts, htmlGenerator.ts)
-*   data/ (Folder containing examples.ts)
-
-### Step 2: Prepare the ZIP for AI Studio
-AI Studio requires the index.html file to be at the root of the zip file.
-
-1.  Select all the project files and folders.
-2.  Right-click and compress them into a ZIP file (e.g., `cerebrum-flux.zip`).
-
-### Step 3: Upload and Run
-1.  Go to the Google AI Studio App Gallery.
-2.  Click "Create new" and select "Zip upload".
-3.  **Upload Your ZIP**: Select `cerebrum-flux.zip`.
-4.  **Add Your API Key**:
-    *   Locate the "Secrets" panel on the left (key icon 🔑).
-    *   Click "Add new secret".
-    *   **Name**: `API_KEY` (Must be exact).
-    *   **Value**: Paste your Gemini API key.
-    *   Click Save.
-5.  The application will build and launch automatically.
+### Running the App
+1.  Clone or download the repository.
+2.  Ensure you have an environment capable of running the React/Vite stack (or upload to an online IDE like StackBlitz/CodeSandbox).
+3.  **Important**: The application expects the API key to be available via `process.env.API_KEY`.
 
 ## 🔒 Privacy & Architecture
-*   **Client-Side Processing**: All state management and graph rendering happen in the browser via React.
-*   **Stateless AI**: User inputs are sent to the Gemini API solely for scoring and analysis. No personal data is stored on external servers to train models.
-*   **Local Persistence**: Session state is saved to localStorage to prevent data loss during a refresh, but stays on your device.
+*   **Local Storage**: All chat history, memory, and progress are stored locally in the browser's `localStorage`. No database required.
+*   **Privacy**: Audio is processed by the Gemini API for immediate analysis and response generation but is not stored for model training by default (subject to Google's API terms).
+*   **Exportable Data**: Parents can export the entire memory state to a JSON file for backup or transfer.
 
 ## ⚙️ Tech Stack
-*   **Core**: React 19, TypeScript, Vite
-*   **AI**: Google GenAI SDK (@google/genai) using gemini-2.5-flash
-*   **Visualization**: Recharts (Radar/Spider diagrams), Custom SVG generation for exports
-*   **Styling**: Tailwind CSS (via CDN)
+*   **Frontend**: React 19, Tailwind CSS
+*   **AI Model**: Google Gemini 2.5 Flash (for Chat, Audio Analysis) & Gemini 2.5 Flash TTS (for Speech)
+*   **Audio**: Web Audio API for recording and processing.

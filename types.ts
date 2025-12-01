@@ -1,3 +1,4 @@
+
 export interface Memory {
   childName?: string;
   childAge?: string;
@@ -11,16 +12,38 @@ export interface Memory {
   activeTaskId?: string;
   targetWords?: string[]; // Words the parent wants to focus on
   masteredWords?: string[]; // Words known to be easy (for confidence)
+  // New: Sound Tracking
+  phonemeStats?: Record<string, { attempts: number; success: number }>;
+  // New: Baseline Data
+  baseline?: {
+    date: number;
+    results: { word: string; phoneme: string; isCorrect: boolean; notes: string }[];
+    summary: string;
+    recommendedStartingPoint: string; // e.g. "Early 8"
+  };
+  // New: Gamification
+  achievements?: Achievement[];
   // Settings
   ttsEngine?: 'gemini' | 'browser';
   [key: string]: any;
 }
 
+export interface Achievement {
+  id: string;
+  unlockedAt: number;
+}
+
 export interface SpeechTask {
   id: string;
   word: string;
-  targetPhoneme?: string;
+  targetPhoneme?: string; // e.g. "R", "S", "TH"
   status: 'new' | 'in_progress' | 'mastered' | 'review_needed';
+  urgency?: 'high' | 'medium' | 'low'; // New: AI assigned urgency
+  report?: {
+    strengths?: string;
+    needsWork?: string;
+    howToHelp?: string;
+  }; // New: Structured feedback for parents
   attempts: number;
   lastPracticed: number;
   isFavorite?: boolean; // New: allow saving words
@@ -69,4 +92,4 @@ export enum TeddyMood {
   EXCITED = 'excited'
 }
 
-export type AppMode = 'landing' | 'chat' | 'story' | 'therapy';
+export type AppMode = 'landing' | 'chat' | 'story' | 'therapy' | 'achievements';
