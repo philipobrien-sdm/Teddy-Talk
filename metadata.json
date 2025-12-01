@@ -1,0 +1,7 @@
+{
+  "name": "Teddy Talk",
+  "description": "A safe, playful, and persistent AI teddy bear companion for children using Gemini API.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
