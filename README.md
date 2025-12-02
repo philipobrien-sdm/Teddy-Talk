@@ -5,6 +5,9 @@ Teddy Talk is a safe, playful, and educational web application designed to help 
 
 Powered by Google's **Gemini 2.5 Flash** models, the app provides real-time conversation, gamified speech therapy exercises, and interactive storytelling.
 
+![IMG_0307](https://github.com/user-attachments/assets/86073113-e0a7-49f9-bb39-cef52596220d)
+
+
 ## 🧸 Key Features
 
 ### 🗣️ Interactive Chat
